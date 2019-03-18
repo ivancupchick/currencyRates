@@ -1,0 +1,29 @@
+.container {
+  width: 80%;
+  margin: 20px auto;
+  background: rgba(199, 199, 199, 0.863);
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 20px 20px 1px 20px;
+  grid-gap: 5px;
+  padding: 10px;
+}
+.menu div:nth-child(7) {
+  grid-column: 1 / -1;
+  background: gray;
+}
+.menu div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.input-date {
+  width: 115px;
+}
+.title {
+  padding-top: 5px;
+  text-align: center;
+}

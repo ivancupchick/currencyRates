@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Курсы валют</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" media="screen" href="style.css">
+  <script src="index.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    <div class="title">
+      <h1>Currency rates</h1>
+    </div>
+    <div id="menu" class="menu">
+      <div></div>
+
+      <div>Currency</div>
+      <div>Rate today</div>
+
+      <div></div>
+
+      <div>
+        <select id="kindOfMoney" name="kindOfMoney" >
+          <option value="USD">Доллар</option>
+          <option value="RUB">100 Российских рублей</option>
+          <option value="EUR">Евро</option>
+          <option value="GBP">Фунт стерлингов</option>
+        </select>
+      </div>
+
+      <div>
+        <p id="nowRate">0</p>
+      </div>
+      <div></div>
+      <div>
+        from <div style="width: 6px; display: inline"> </div> <input type="date" id="dateFrom" class="input-date" value = "">
+      </div>
+      
+      <div>
+        to <div style="width: 6px; display: inline"> </div><input type="date" id="dateTo" class="input-date">
+      </div>
+      
+      <button id="createDiagram">Compare</button>
+    </div>
+    <div id="blockWithCanvas">
+      
+    </div>
+  </div>
+  
+</body>
+</html>
