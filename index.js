@@ -258,7 +258,9 @@ function eventsListener() {
       })
       .then( (array) => {
         pushDatesToArray(array);
+
         localStorage.setItem(`${ui.selecterCurrency.value}`, JSON.stringify(ui.arrayDates));
+
         drawDiagram(difference, ui.selecterCurrency.value);
       });
 
@@ -290,8 +292,11 @@ function eventsListener() {
 
   function showTodayCurrencyRate(date) {
     let currency = CURRENCIES[ui.selecterCurrency.value];
-  
-    getData(date, currency)
+    let url = `http://www.nbrb.by/API/ExRates/Rates/${currency}?onDate=${formatDateForNBRB(date)}&Periodicity=0`;
+    fetch(url)
+      .then( (response) => {
+        return response.json();
+      })
       .then( (currencyValue) => {
         ui.nowRate.innerHTML = highlightRate(currencyValue);
       });
