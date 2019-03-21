@@ -250,7 +250,7 @@ function eventsListener() {
   function pushingDatesToArrayLess365Days( dateFrom, dateTo, difference) {
     let currency = CURRENCIES[ui.selecterCurrency.value];
 
-    let url = `http://www.nbrb.by/API/ExRates/Rates/Dynamics/${currency}?startDate=${formatDateForNBRB(dateFrom)}&endDate=${formatDateForNBRB(dateTo)}`
+    let url = `https://www.nbrb.by/API/ExRates/Rates/Dynamics/${currency}?startDate=${formatDateForNBRB(dateFrom)}&endDate=${formatDateForNBRB(dateTo)}`
     
     fetch(url)
       .then( (response) => {
@@ -292,7 +292,7 @@ function eventsListener() {
 
   function showTodayCurrencyRate(date) {
     let currency = CURRENCIES[ui.selecterCurrency.value];
-    let url = `http://www.nbrb.by/API/ExRates/Rates/${currency}?onDate=${formatDateForNBRB(date)}&Periodicity=0`;
+    let url = `https://www.nbrb.by/API/ExRates/Rates/${currency}?onDate=${formatDateForNBRB(date)}&Periodicity=0`;
     fetch(url)
       .then( (response) => {
         return response.json();
@@ -360,7 +360,7 @@ function eventsListener() {
 function getData(date, currentlyCurrency) {
   return new Promise((resolve, reject) => {
     let request = new XMLHttpRequest();
-    let url = `http://www.nbrb.by/API/ExRates/Rates/${currentlyCurrency}?onDate=${formatDateForNBRB(date)}&Periodicity=0`;
+    let url = `https://www.nbrb.by/API/ExRates/Rates/${currentlyCurrency}?onDate=${formatDateForNBRB(date)}&Periodicity=0`;
     request.open('GET', url); 
     request.onload = () => {
       if (request.status == 200) {
