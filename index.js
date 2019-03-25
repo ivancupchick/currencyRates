@@ -1,12 +1,12 @@
 function getById(id) {
   return document.getElementById(id);
 }
-
-const BEGINCOORS = {
+// config
+const BEGINCOORDS = {
   x: 25,
   y: 30
 }
-
+let COEFFICIENT;
 
 const CURRENCIES = {
   RUB: 298,
@@ -14,10 +14,8 @@ const CURRENCIES = {
   EUR: 292,
   GBP: 143
 }
+
 const COLORS = ['blue', 'red', 'black', 'purple', 'yellow', 'white'];
-
-let COEFFICIENT = 170;
-
 
 class UI {
   constructor() {
@@ -30,10 +28,15 @@ class UI {
     this.selecterCurrency = getById('kindOfMoney');
     this.dateFrom = getById('dateFrom').value;
     this.dateTo = getById('dateTo').value;
+
     this.buttonCreateDiagram = getById('createDiagram');
+    this.buttonSetWeek = getById('setWeek');
+    this.buttonSetYear = getById('setYear');
+    this.buttonSetMonth = getById('setMonth');
+
     this.arrayDates = [];
     this.countForDrawing;
-    this.beginCods = { x: BEGINCOORS.x, y: this.canvas.height - BEGINCOORS.y };
+    this.beginCods = { x: BEGINCOORDS.x, y: this.canvas.height - BEGINCOORDS.y };
     this.sizeDiagram = { width: this.canvas.width - 15 - this.beginCods.x, height: this.beginCods.y - 15 }
   }
 
@@ -68,7 +71,6 @@ class UI {
 
   drawHorizontalLinesAndMarks() {  // Attention! static data are using in this function
     const stepY = 0.05;
-    const range = 1.55;
 
     
     this.context.beginPath();
@@ -123,7 +125,7 @@ class UI {
     for (let i = 7; i > 0; i--) {
       if (difference % i == 0) {
         for (let j = 0; j < i; j++) {
-          result.push( formatDate(date) );
+          result.push( `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}` );
           date.setDate( date.getDate() + (difference / i) );  
         }
         break; 
@@ -181,8 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function eventsListener() {
   let currentlyDate = new Date();
-  getById('blockWithCanvas').innerHTML = `<canvas id="diagramCanvas" width="${getById('blockWithCanvas').clientWidth}" height="${getById('blockWithCanvas').clientWidth / 1.5}"></canvas>`
-  COEFFICIENT = getById('blockWithCanvas').clientWidth / 2.64;
+  attachCanvasToUI();
   let ui = new UI();
 
   showTodayCurrencyRate(currentlyDate);
@@ -192,9 +193,9 @@ function eventsListener() {
 
   // start fill template date
   let date = new Date();
-  ui.inputDateTo.value = valueForInputDate(date);
+  ui.inputDateTo.value = formatDate(date);
   date.setDate(date.getDate() - 119);
-  ui.inputDateFrom.value =  valueForInputDate(date);
+  ui.inputDateFrom.value =  formatDate(date);
   // end fill template date
 
   ui.setBackgrondCanvas();
@@ -202,8 +203,7 @@ function eventsListener() {
 
   window.addEventListener('resize', () => {
     getById('diagramCanvas').remove();
-    getById('blockWithCanvas').innerHTML = `<canvas id="diagramCanvas" width="${getById('blockWithCanvas').clientWidth}" height="${getById('blockWithCanvas').clientWidth / 1.5}"></canvas>`
-    COEFFICIENT = getById('blockWithCanvas').clientWidth / 2.64;
+    attachCanvasToUI();
     ui = new UI();
     ui.setBackgrondCanvas();
     drawResizeDiagram();
@@ -244,13 +244,53 @@ function eventsListener() {
     }
   })
 
+  ui.buttonSetWeek.addEventListener('click', (event) => {
+    let date = new Date();
+    ui.inputDateTo.value = formatDate(date);
+    date.setDate(date.getDate() - 6);
+    ui.inputDateFrom.value =  formatDate(date);
+
+    ui.setBackgrondCanvas();
+    clearLocalStorage();
+  })
+
+  ui.buttonSetMonth.addEventListener('click', (event) => {
+    let date = new Date();
+    ui.inputDateTo.value = formatDate(date);
+    date.setDate(date.getDate() - 29);
+    ui.inputDateFrom.value =  formatDate(date);
+
+    ui.setBackgrondCanvas();
+    clearLocalStorage();
+  })
+
+  ui.buttonSetYear.addEventListener('click', (event) => {
+    let date = new Date();
+    ui.inputDateTo.value = formatDate(date);
+    date.setDate(date.getDate() - 364);
+    ui.inputDateFrom.value =  formatDate(date);
+
+    ui.setBackgrondCanvas();
+    clearLocalStorage();
+  })
+
 
 
   // functions
+
+  function attachCanvasToUI() {
+    getById('blockWithCanvas').innerHTML = `
+    <canvas id="diagramCanvas" 
+            width="${getById('blockWithCanvas').clientWidth}" 
+            height="${getById('blockWithCanvas').clientWidth / 1.5}">
+    </canvas>
+    `;
+    COEFFICIENT = getById('blockWithCanvas').clientWidth / 2.64;
+  }
   function pushingDatesToArrayLess365Days( dateFrom, dateTo, difference) {
     let currency = CURRENCIES[ui.selecterCurrency.value];
 
-    let url = `https://www.nbrb.by/API/ExRates/Rates/Dynamics/${currency}?startDate=${formatDateForNBRB(dateFrom)}&endDate=${formatDateForNBRB(dateTo)}`
+    let url = `http://www.nbrb.by/API/ExRates/Rates/Dynamics/${currency}?startDate=${formatDate(dateFrom)}&endDate=${formatDate(dateTo)}`
     
     fetch(url)
       .then( (response) => {
@@ -284,7 +324,7 @@ function eventsListener() {
         return pushingDatesToArrayMore365Days(dateFrom, difference);
       })
       .catch((error) => {
-        console.error(`Загрузка не произошла по дате ${formatDateForNBRB(dateFrom)}`)
+        console.error(`Загрузка не произошла по дате ${formatDate(dateFrom)}`)
         dateFrom.setDate( dateFrom.getDate() + 1);
         return pushingDatesToArrayMore365Days(dateFrom, difference);
       });
@@ -292,7 +332,7 @@ function eventsListener() {
 
   function showTodayCurrencyRate(date) {
     let currency = CURRENCIES[ui.selecterCurrency.value];
-    let url = `https://www.nbrb.by/API/ExRates/Rates/${currency}?onDate=${formatDateForNBRB(date)}&Periodicity=0`;
+    let url = `http://www.nbrb.by/API/ExRates/Rates/${currency}?onDate=${formatDate(date)}&Periodicity=0`;
     fetch(url)
       .then( (response) => {
         return response.json();
@@ -320,9 +360,11 @@ function eventsListener() {
     for (const key in CURRENCIES) {
       if (localStorage.getItem(key)) {
         const element = CURRENCIES[key];
-        let array = JSON.parse(localStorage.getItem(key))
-        ui.arrayDates = array;
-        drawDiagram(differenceDatesInDays, key);
+        if (localStorage.getItem(key)) {
+          let array = JSON.parse(localStorage.getItem(key))
+          ui.arrayDates = array;
+          drawDiagram(differenceDatesInDays, key);
+        }
       }
     }
     
@@ -360,7 +402,7 @@ function eventsListener() {
 function getData(date, currentlyCurrency) {
   return new Promise((resolve, reject) => {
     let request = new XMLHttpRequest();
-    let url = `https://www.nbrb.by/API/ExRates/Rates/${currentlyCurrency}?onDate=${formatDateForNBRB(date)}&Periodicity=0`;
+    let url = `http://www.nbrb.by/API/ExRates/Rates/${currentlyCurrency}?onDate=${formatDate(date)}&Periodicity=0`;
     request.open('GET', url); 
     request.onload = () => {
       if (request.status == 200) {
@@ -378,26 +420,13 @@ function getData(date, currentlyCurrency) {
   })
 }
 
-function highlightRate(cur) {
-  let result = cur.Cur_OfficialRate;
+function highlightRate(response) {
+  let result = response.Cur_OfficialRate;
   return result;
 } 
 
-function formatDateForNBRB(date) {
-  let result = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-  return result;
-}
-
-// for calendar
 function formatDate(date) {
-  let result = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
-  return result;
-}
-
-function valueForInputDate(date) {
-  let month = date.getMonth() + 1;
-  let day = date.getDate();
-  if ( month < 10 ) month = `0${date.getMonth() + 1}`;
-  if ( day < 10 ) day = `0${date.getDate()}`
+  let month = (date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : (date.getMonth() + 1);
+  let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
   return `${date.getFullYear()}-${month}-${day}`;
 }
