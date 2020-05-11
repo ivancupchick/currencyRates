@@ -290,7 +290,7 @@ function eventsListener() {
   function pushingDatesToArrayLess365Days( dateFrom, dateTo, difference) {
     let currency = CURRENCIES[ui.selecterCurrency.value];
 
-    let url = `http://www.nbrb.by/API/ExRates/Rates/Dynamics/${currency}?startDate=${formatDate(dateFrom)}&endDate=${formatDate(dateTo)}`
+    let url = `https://www.nbrb.by/API/ExRates/Rates/Dynamics/${currency}?startDate=${formatDate(dateFrom)}&endDate=${formatDate(dateTo)}`
     
     fetch(url)
       .then( (response) => {
