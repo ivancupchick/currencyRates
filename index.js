@@ -332,7 +332,7 @@ function eventsListener() {
 
   function showTodayCurrencyRate(date) {
     let currency = CURRENCIES[ui.selecterCurrency.value];
-    let url = `http://www.nbrb.by/API/ExRates/Rates/${currency}?onDate=${formatDate(date)}&Periodicity=0`;
+    let url = `https://www.nbrb.by/API/ExRates/Rates/${currency}?onDate=${formatDate(date)}&Periodicity=0`;
     fetch(url)
       .then( (response) => {
         return response.json();
@@ -402,7 +402,7 @@ function eventsListener() {
 function getData(date, currentlyCurrency) {
   return new Promise((resolve, reject) => {
     let request = new XMLHttpRequest();
-    let url = `http://www.nbrb.by/API/ExRates/Rates/${currentlyCurrency}?onDate=${formatDate(date)}&Periodicity=0`;
+    let url = `https://www.nbrb.by/API/ExRates/Rates/${currentlyCurrency}?onDate=${formatDate(date)}&Periodicity=0`;
     request.open('GET', url); 
     request.onload = () => {
       if (request.status == 200) {
